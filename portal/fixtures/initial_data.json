@@ -1,0 +1,103 @@
+[
+  {
+    "model": "portal.category",
+    "pk": 1,
+    "fields": {
+      "name": "IT Issue",
+      "category_type": "Ticket",
+      "description": "Problems related to computers, internet, software, printers, or any IT equipment on campus.",
+      "is_active": true,
+      "created_at": "2024-01-01T08:00:00Z"
+    }
+  },
+  {
+    "model": "portal.category",
+    "pk": 2,
+    "fields": {
+      "name": "Classroom Issue",
+      "category_type": "Ticket",
+      "description": "Issues with projectors, lighting, seating, or classroom facilities.",
+      "is_active": true,
+      "created_at": "2024-01-01T08:00:00Z"
+    }
+  },
+  {
+    "model": "portal.category",
+    "pk": 3,
+    "fields": {
+      "name": "Library Issue",
+      "category_type": "Ticket",
+      "description": "Concerns about library resources, book availability, noise levels, or library equipment.",
+      "is_active": true,
+      "created_at": "2024-01-01T08:00:00Z"
+    }
+  },
+  {
+    "model": "portal.category",
+    "pk": 4,
+    "fields": {
+      "name": "Facility Issue",
+      "category_type": "Ticket",
+      "description": "Maintenance requests for bathrooms, corridors, lifts, or general campus infrastructure.",
+      "is_active": true,
+      "created_at": "2024-01-01T08:00:00Z"
+    }
+  },
+  {
+    "model": "portal.category",
+    "pk": 5,
+    "fields": {
+      "name": "General Request",
+      "category_type": "Ticket",
+      "description": "Any other campus helpdesk request that does not fit the above categories.",
+      "is_active": true,
+      "created_at": "2024-01-01T08:00:00Z"
+    }
+  },
+  {
+    "model": "portal.category",
+    "pk": 6,
+    "fields": {
+      "name": "Lost Item",
+      "category_type": "LostFound",
+      "description": "Category for items that have been reported as lost on campus.",
+      "is_active": true,
+      "created_at": "2024-01-01T08:00:00Z"
+    }
+  },
+  {
+    "model": "portal.category",
+    "pk": 7,
+    "fields": {
+      "name": "Found Item",
+      "category_type": "LostFound",
+      "description": "Category for items that have been found on campus and handed in.",
+      "is_active": true,
+      "created_at": "2024-01-01T08:00:00Z"
+    }
+  },
+  {
+    "model": "portal.announcement",
+    "pk": 1,
+    "fields": {
+      "title": "Welcome to Campus Connect",
+      "message": "Welcome to the Campus HelpDesk and Lost & Found Portal. You can use this platform to report lost items, raise campus issues, and track the progress of your reports. Please register or log in to get started. For any urgent matters please visit the campus helpdesk in Building A.",
+      "posted_by": null,
+      "is_active": true,
+      "created_at": "2024-01-01T09:00:00Z",
+      "updated_at": "2024-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "portal.announcement",
+    "pk": 2,
+    "fields": {
+      "title": "Lost and Found Desk Hours",
+      "message": "The Lost and Found desk is open Monday to Friday from 9:00 AM to 5:00 PM in the Student Services Centre, Ground Floor, Building B. All unclaimed items are held for 30 days. Please bring your student ID when collecting items.",
+      "posted_by": null,
+      "is_active": true,
+      "created_at": "2024-01-02T09:00:00Z",
+      "updated_at": "2024-01-02T09:00:00Z"
+    }
+  }
+]
