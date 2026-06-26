@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="cc-form-section py-5 py-lg-6">
+    <div class="container">
+        <div class="mb-5 text-center text-lg-start">
+            <h2 class="fw-bold mb-2">
+                <i class="bi bi-clock-history me-2 text-primary"></i>My Activity History
+            </h2>
+            <p class="text-muted mb-0">
+                Track your recent activity on Campus Connect and pick up where you left off.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card cc-card cc-history-card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="bi bi-bar-chart-line me-2 text-primary"></i>Visit Count
+                        </h5>
+                        <p class="text-muted small mb-3">
+                            A quick look at how often you have visited the portal in this session.
+                        </p>
+                        <div class="display-4 fw-bold text-primary">{{ visit_count }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card cc-card cc-history-card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="bi bi-geo-alt me-2 text-secondary"></i>Last Visited Page
+                        </h5>
+                        <p class="text-muted small mb-3">
+                            Your most recent stop in Campus Connect.
+                        </p>
+                        <div class="fs-4 fw-semibold text-dark">
+                            {% if last_visited %}
+                                {{ last_visited }}
+                            {% else %}
+                                Start exploring the portal
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="card cc-card cc-history-card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="bi bi-search me-2 text-info"></i>Recent Searches
+                        </h5>
+                        <p class="text-muted small mb-3">
+                            Your latest search keywords from the reports page.
+                        </p>
+
+                        {% if recent_keywords %}
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for kw in recent_keywords %}
+                                    <a href="{% url 'report_list' %}?q={{ kw }}"
+                                       class="badge cc-history-pill text-decoration-none fs-6 px-3 py-2">
+                                        <i class="bi bi-search me-1"></i>{{ kw }}
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="cc-history-empty">
+                                <i class="bi bi-search-heart me-2"></i>No searches yet.
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="card cc-card cc-history-card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="bi bi-eye me-2 text-success"></i>Recently Viewed Reports
+                        </h5>
+                        <p class="text-muted small mb-4">
+                            A quick list of the reports you have opened most recently.
+                        </p>
+
+                        {% if recently_viewed %}
+                            <div class="row g-3">
+                                {% for item in recently_viewed %}
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="card cc-history-report-card border shadow-sm h-100">
+                                            <div class="card-body p-3">
+                                                {% if item.report_type == 'Ticket' %}
+                                                    <span class="badge bg-primary mb-2">
+                                                        <i class="bi bi-headset me-1"></i>Ticket
+                                                    </span>
+                                                {% else %}
+                                                    <span class="badge bg-warning text-dark mb-2">
+                                                        <i class="bi bi-bag-x me-1"></i>Lost / Found
+                                                    </span>
+                                                {% endif %}
+
+                                                <h6 class="fw-semibold mb-2">{{ item.title }}</h6>
+
+                                                {% if item.status == 'Open' %}
+                                                    <span class="badge bg-info text-dark">Open</span>
+                                                {% elif item.status == 'In Progress' %}
+                                                    <span class="badge bg-primary">In Progress</span>
+                                                {% elif item.status == 'Resolved' %}
+                                                    <span class="badge bg-success">Resolved</span>
+                                                {% elif item.status == 'Claimed' %}
+                                                    <span class="badge bg-success">Claimed</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">{{ item.status }}</span>
+                                                {% endif %}
+
+                                                <div class="mt-3">
+                                                    <a href="{{ item.url }}" class="btn btn-outline-primary btn-sm">
+                                                        <i class="bi bi-eye me-1"></i>View Again
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="cc-history-empty">
+                                <i class="bi bi-eye-slash me-2"></i>No reports viewed yet.
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Back to Home
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock content %}
