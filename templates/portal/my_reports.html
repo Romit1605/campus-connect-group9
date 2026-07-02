@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="cc-form-section py-5 py-lg-6">
+    <div class="container">
+
+        <!-- Page Header -->
+        <div class="mb-5 text-center text-lg-start">
+            <h2 class="fw-bold mb-2">
+                <i class="bi bi-journal-text me-2 text-primary"></i>My Reports
+            </h2>
+            <p class="text-muted mb-0">
+                Manage and track all the reports you have submitted to Campus Connect.
+            </p>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="row g-3 mb-5">
+            <div class="col-6 col-md-3">
+                <div class="card cc-card border-0 shadow-sm text-center p-3">
+                    <div class="display-5 fw-bold text-primary">{{ ticket_count }}</div>
+                    <div class="text-muted small mt-1">
+                        <i class="bi bi-headset me-1"></i>Ticket{{ ticket_count|pluralize }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card cc-card border-0 shadow-sm text-center p-3">
+                    <div class="display-5 fw-bold text-warning">{{ lost_found_count }}</div>
+                    <div class="text-muted small mt-1">
+                        <i class="bi bi-bag-x me-1"></i>Lost &amp; Found
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 d-flex align-items-center justify-content-md-end gap-2 mt-2 mt-md-0">
+                <a href="{% url 'ticket_create' %}" id="btn_new_ticket" class="btn btn-primary btn-sm px-3">
+                    <i class="bi bi-headset me-1"></i>New Ticket
+                </a>
+                <a href="{% url 'lostfound_create' %}" id="btn_new_lf" class="btn btn-warning btn-sm px-3 text-dark">
+                    <i class="bi bi-bag-x me-1"></i>New Lost/Found
+                </a>
+            </div>
+        </div>
+
+        <!-- ======================== My Tickets ======================== -->
+        <section class="mb-5">
+            <h4 class="fw-bold mb-3">
+                <i class="bi bi-headset me-2 text-primary"></i>My Tickets
+            </h4>
+
+            {% if tickets %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle border rounded overflow-hidden">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Submitted</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ticket in tickets %}
+                            <tr>
+                                <td class="text-muted small">{{ ticket.pk }}</td>
+                                <td class="fw-semibold">{{ ticket.title }}</td>
+                                <td class="small text-muted">
+                                    {% if ticket.category %}{{ ticket.category.name }}{% else %}—{% endif %}
+                                </td>
+                                <td>
+                                    {% if ticket.priority == 'High' %}
+                                        <span class="badge bg-danger">High</span>
+                                    {% elif ticket.priority == 'Medium' %}
+                                        <span class="badge bg-warning text-dark">Medium</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Low</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if ticket.status == 'Open' %}
+                                        <span class="badge bg-info text-dark">Open</span>
+                                    {% elif ticket.status == 'In Progress' %}
+                                        <span class="badge bg-primary">In Progress</span>
+                                    {% elif ticket.status == 'Resolved' %}
+                                        <span class="badge bg-success">Resolved</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ ticket.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="small text-muted">{{ ticket.created_at|date:"d M Y" }}</td>
+                                <td class="text-end">
+                                    <a href="{% url 'ticket_detail' ticket.pk %}"
+                                       id="btn_view_ticket_{{ ticket.pk }}"
+                                       class="btn btn-outline-primary btn-sm me-1">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a href="{% url 'ticket_update' ticket.pk %}"
+                                       id="btn_edit_ticket_{{ ticket.pk }}"
+                                       class="btn btn-outline-secondary btn-sm">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-4 bg-light rounded">
+                    <i class="bi bi-inbox display-4 text-secondary mb-2 d-block"></i>
+                    <p class="text-muted mb-2">You haven't submitted any tickets yet.</p>
+                    <a href="{% url 'ticket_create' %}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-headset me-1"></i>Submit a Ticket
+                    </a>
+                </div>
+            {% endif %}
+        </section>
+
+        <!-- ======================== My Lost & Found Reports ======================== -->
+        <section class="mb-5">
+            <h4 class="fw-bold mb-3">
+                <i class="bi bi-bag-x me-2 text-warning"></i>My Lost &amp; Found Reports
+            </h4>
+
+            {% if lost_found %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle border rounded overflow-hidden">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Title</th>
+                                <th>Type</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Reported</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in lost_found %}
+                            <tr>
+                                <td class="text-muted small">{{ item.pk }}</td>
+                                <td class="fw-semibold">{{ item.title }}</td>
+                                <td>
+                                    {% if item.item_type == 'Lost Item' %}
+                                        <span class="badge bg-danger">Lost</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Found</span>
+                                    {% endif %}
+                                </td>
+                                <td class="small text-muted">
+                                    {% if item.location %}{{ item.location }}{% else %}—{% endif %}
+                                </td>
+                                <td>
+                                    {% if item.status == 'Open' %}
+                                        <span class="badge bg-info text-dark">Open</span>
+                                    {% elif item.status == 'In Progress' %}
+                                        <span class="badge bg-primary">In Progress</span>
+                                    {% elif item.status == 'Claimed' %}
+                                        <span class="badge bg-success">Claimed</span>
+                                    {% elif item.status == 'Resolved' %}
+                                        <span class="badge bg-success">Resolved</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ item.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="small text-muted">{{ item.created_at|date:"d M Y" }}</td>
+                                <td class="text-end">
+                                    <a href="{% url 'lostfound_detail' item.pk %}"
+                                       id="btn_view_lf_{{ item.pk }}"
+                                       class="btn btn-outline-warning btn-sm me-1 text-dark">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a href="{% url 'lostfound_update' item.pk %}"
+                                       id="btn_edit_lf_{{ item.pk }}"
+                                       class="btn btn-outline-secondary btn-sm">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-4 bg-light rounded">
+                    <i class="bi bi-bag-x display-4 text-secondary mb-2 d-block"></i>
+                    <p class="text-muted mb-2">You haven't submitted any lost/found reports yet.</p>
+                    <a href="{% url 'lostfound_create' %}" class="btn btn-warning btn-sm text-dark">
+                        <i class="bi bi-bag-x me-1"></i>Report Lost / Found
+                    </a>
+                </div>
+            {% endif %}
+        </section>
+
+        <!-- Back link -->
+        <div class="mt-2">
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Back to Home
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock content %}

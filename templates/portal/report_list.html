@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="cc-form-section py-5 py-lg-6">
+    <div class="container">
+
+        <!-- Page Header -->
+        <div class="mb-4 text-center text-lg-start">
+            <h2 class="fw-bold mb-2">
+                <i class="bi bi-list-ul me-2 text-primary"></i>Browse Reports
+            </h2>
+            <p class="text-muted mb-0">
+                Search and filter all public campus tickets and lost &amp; found reports.
+            </p>
+        </div>
+
+        <!-- Search + Filter Bar -->
+        <form method="get" action="" class="mb-4">
+            <div class="row g-2 align-items-end">
+                <!-- Keyword search -->
+                <div class="col-12 col-md-4">
+                    <label for="id_q" class="form-label fw-semibold small">Search</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input
+                            type="text"
+                            id="id_q"
+                            name="q"
+                            value="{{ q }}"
+                            class="form-control"
+                            placeholder="Keywords…"
+                        >
+                    </div>
+                </div>
+
+                <!-- Report type -->
+                <div class="col-6 col-md-2">
+                    <label for="id_report_type" class="form-label fw-semibold small">Type</label>
+                    <select id="id_report_type" name="report_type" class="form-select">
+                        <option value="all"      {% if report_type == 'all'      %}selected{% endif %}>All Types</option>
+                        <option value="ticket"   {% if report_type == 'ticket'   %}selected{% endif %}>Ticket</option>
+                        <option value="lostfound"{% if report_type == 'lostfound'%}selected{% endif %}>Lost &amp; Found</option>
+                    </select>
+                </div>
+
+                <!-- Status -->
+                <div class="col-6 col-md-2">
+                    <label for="id_status" class="form-label fw-semibold small">Status</label>
+                    <select id="id_status" name="status" class="form-select">
+                        <option value="">All Statuses</option>
+                        <option value="Open"        {% if status == 'Open'        %}selected{% endif %}>Open</option>
+                        <option value="In Progress" {% if status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                        <option value="Resolved"    {% if status == 'Resolved'    %}selected{% endif %}>Resolved</option>
+                        <option value="Closed"      {% if status == 'Closed'      %}selected{% endif %}>Closed</option>
+                        <option value="Claimed"     {% if status == 'Claimed'     %}selected{% endif %}>Claimed</option>
+                    </select>
+                </div>
+
+                <!-- Item type (Lost / Found) -->
+                <div class="col-6 col-md-2">
+                    <label for="id_item_type" class="form-label fw-semibold small">Item Type</label>
+                    <select id="id_item_type" name="item_type" class="form-select">
+                        <option value="">Any</option>
+                        <option value="Lost Item"  {% if item_type == 'Lost Item'  %}selected{% endif %}>Lost Item</option>
+                        <option value="Found Item" {% if item_type == 'Found Item' %}selected{% endif %}>Found Item</option>
+                    </select>
+                </div>
+
+                <!-- Category (tickets) -->
+                <div class="col-6 col-md-2">
+                    <label for="id_category" class="form-label fw-semibold small">Category</label>
+                    <select id="id_category" name="category" class="form-select">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat.pk }}" {% if category_id == cat.pk|stringformat:"s" %}selected{% endif %}>
+                                {{ cat.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Buttons -->
+                <div class="col-12 col-md-auto d-flex gap-2 mt-2 mt-md-0">
+                    <button type="submit" id="btn_search" class="btn btn-primary px-4">
+                        <i class="bi bi-filter me-1"></i>Filter
+                    </button>
+                    <a href="{% url 'report_list' %}" id="btn_clear" class="btn btn-outline-secondary px-3">
+                        <i class="bi bi-x-circle me-1"></i>Clear
+                    </a>
+                </div>
+            </div>
+        </form>
+
+        <!-- Result summary -->
+        <p class="text-muted small mb-3">
+            Showing <strong>{{ total }}</strong> report{{ total|pluralize }} 
+            {% if q %}matching <em>"{{ q }}"</em>{% endif %}
+        </p>
+
+        <!-- Reports Grid -->
+        {% if reports %}
+            <div class="row g-4">
+                {% for report in reports %}
+                    <div class="col-12 col-md-6 col-xl-4">
+                        <div class="card cc-card h-100 border-0 shadow-sm">
+                            <div class="card-body p-4 d-flex flex-column">
+
+                                <!-- Type badge -->
+                                {% if report.report_type == 'ticket' %}
+                                    <span class="badge bg-primary mb-2 align-self-start">
+                                        <i class="bi bi-headset me-1"></i>Ticket
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark mb-2 align-self-start">
+                                        <i class="bi bi-bag-x me-1"></i>Lost &amp; Found
+                                    </span>
+                                {% endif %}
+
+                                <!-- Title -->
+                                <h5 class="fw-bold mb-2">{{ report.title }}</h5>
+
+                                <!-- Description snippet -->
+                                <p class="text-muted small flex-grow-1 mb-3">
+                                    {{ report.description|truncatechars:120 }}
+                                </p>
+
+                                <!-- Meta: status, date, user -->
+                                <div class="d-flex flex-wrap gap-2 mb-3 small">
+                                    {% if report.status == 'Open' %}
+                                        <span class="badge bg-info text-dark">Open</span>
+                                    {% elif report.status == 'In Progress' %}
+                                        <span class="badge bg-primary">In Progress</span>
+                                    {% elif report.status == 'Resolved' %}
+                                        <span class="badge bg-success">Resolved</span>
+                                    {% elif report.status == 'Claimed' %}
+                                        <span class="badge bg-success">Claimed</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ report.status }}</span>
+                                    {% endif %}
+
+                                    <span class="text-muted">
+                                        <i class="bi bi-calendar3 me-1"></i>{{ report.created_at|date:"d M Y" }}
+                                    </span>
+
+                                    <span class="text-muted">
+                                        <i class="bi bi-person me-1"></i>{{ report.user.username }}
+                                    </span>
+                                </div>
+
+                                <!-- View button -->
+                                {% if report.report_type == 'ticket' %}
+                                    <a href="{% url 'ticket_detail' report.pk %}"
+                                       id="btn_ticket_{{ report.pk }}"
+                                       class="btn btn-outline-primary btn-sm mt-auto">
+                                        <i class="bi bi-eye me-1"></i>View Ticket
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'lostfound_detail' report.pk %}"
+                                       id="btn_lf_{{ report.pk }}"
+                                       class="btn btn-outline-warning btn-sm mt-auto text-dark">
+                                        <i class="bi bi-eye me-1"></i>View Report
+                                    </a>
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+        {% else %}
+            <!-- Empty state -->
+            <div class="text-center py-5">
+                <i class="bi bi-inbox display-3 text-secondary mb-3 d-block"></i>
+                <h5 class="fw-semibold text-muted">No reports found</h5>
+                <p class="text-muted small">Try adjusting your search or filters, or submit a new report.</p>
+                <div class="d-flex justify-content-center gap-3 mt-3">
+                    <a href="{% url 'ticket_create' %}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-headset me-1"></i>Submit a Ticket
+                    </a>
+                    <a href="{% url 'lostfound_create' %}" class="btn btn-warning btn-sm text-dark">
+                        <i class="bi bi-bag-x me-1"></i>Report Lost / Found
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Back link -->
+        <div class="mt-5">
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Back to Home
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock content %}
