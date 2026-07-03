@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="cc-form-section py-5 py-lg-6">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-xl-9">
+                <div class="card cc-card shadow-lg border-0">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="d-flex align-items-center gap-2 mb-4">
+                            <i class="bi bi-megaphone-fill fs-3 text-primary"></i>
+                            <div>
+                                <h2 class="fw-bold mb-1">Announcements</h2>
+                                <p class="text-muted mb-0">Latest updates from the Campus Connect portal.</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-5">
+                            <h4 class="fw-semibold mb-3">Official Announcements</h4>
+                            {% if announcements %}
+                                <div class="d-flex flex-column gap-3">
+                                    {% for announcement in announcements %}
+                                    <div class="border rounded-3 p-4 bg-light">
+                                        <div class="d-flex flex-wrap justify-content-between gap-2 mb-2">
+                                            <h5 class="fw-semibold mb-0">{{ announcement.title }}</h5>
+                                            <span class="badge bg-primary">{{ announcement.created_at|date:"d M Y" }}</span>
+                                        </div>
+                                        <p class="mb-0" style="white-space: pre-line;">{{ announcement.message }}</p>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="border rounded-3 p-4 bg-light text-muted">
+                                    No active announcements at the moment.
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            <h4 class="fw-semibold mb-3">Recent Resolved Updates</h4>
+                            {% if resolved_tickets or resolved_items %}
+                                <div class="d-flex flex-column gap-3">
+                                    {% for ticket in resolved_tickets %}
+                                    <div class="border rounded-3 p-4 bg-light">
+                                        <div class="d-flex flex-wrap justify-content-between gap-2 mb-2">
+                                            <h6 class="fw-semibold mb-0">{{ ticket.title }}</h6>
+                                            <span class="badge bg-success">{{ ticket.status }}</span>
+                                        </div>
+                                        <div class="small text-muted mb-2">
+                                            <i class="bi bi-geo-alt me-1"></i>{{ ticket.location|default:"Campus" }}
+                                        </div>
+                                        <div class="d-flex flex-wrap justify-content-between gap-2 align-items-center">
+                                            <span class="small text-muted">{{ ticket.updated_at|default:ticket.created_at|date:"d M Y, H:i" }}</span>
+                                            <a href="{% url 'ticket_detail' ticket.pk %}" class="btn btn-outline-primary btn-sm">View details</a>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+
+                                    {% for item in resolved_items %}
+                                    <div class="border rounded-3 p-4 bg-light">
+                                        <div class="d-flex flex-wrap justify-content-between gap-2 mb-2">
+                                            <h6 class="fw-semibold mb-0">{{ item.title }}</h6>
+                                            <span class="badge bg-success">{{ item.status }}</span>
+                                        </div>
+                                        <div class="small text-muted mb-2">
+                                            <i class="bi bi-geo-alt me-1"></i>{{ item.location|default:"Campus" }}
+                                        </div>
+                                        <div class="d-flex flex-wrap justify-content-between gap-2 align-items-center">
+                                            <span class="small text-muted">{{ item.updated_at|default:item.created_at|date:"d M Y, H:i" }}</span>
+                                            <a href="{% url 'lostfound_detail' item.pk %}" class="btn btn-outline-primary btn-sm">View details</a>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="border rounded-3 p-4 bg-light text-muted">
+                                    No resolved updates have been shared yet.
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
