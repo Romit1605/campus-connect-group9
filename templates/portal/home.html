@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ===== HERO SECTION ===== -->
+<section class="cc-hero text-center text-white">
+    <div class="container py-5 py-lg-6">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="mb-3">
+                    <i class="bi bi-shield-check display-4 text-warning"></i>
+                </div>
+                <h1 class="display-5 fw-bold mb-3">
+                    Campus HelpDesk &amp; Lost/Found Portal
+                </h1>
+                <p class="lead mb-4 text-light">
+                    Your one-stop platform to report lost items, raise campus issues,
+                    and track progress — all in one place.
+                </p>
+                <div class="d-flex flex-wrap justify-content-center gap-3 cc-hero-actions">
+                    <a href="{% url 'lostfound_create' %}" class="btn btn-warning btn-lg px-4 fw-semibold">
+                        <i class="bi bi-bag-x me-2"></i>Report Lost / Found
+                    </a>
+                    <a href="{% url 'ticket_create' %}" class="btn btn-outline-light btn-lg px-4 fw-semibold">
+                        <i class="bi bi-plus-circle me-2"></i>Submit a Ticket
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Decorative wave at the bottom of the hero -->
+    <div class="cc-hero-wave">
+        <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+            <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="#f8f9fa"/>
+        </svg>
+    </div>
+</section>
+
+<!-- ===== FEATURE CARDS ===== -->
+<section class="py-5 py-lg-6 bg-light cc-feature-section">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-2">What Can You Do Here?</h2>
+        <p class="text-center text-muted mb-5">
+            Explore the core features of Campus Connect.
+        </p>
+
+        <div class="row justify-content-center">
+
+            <!-- Card 1: Lost & Found -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card cc-card cc-feature-card h-100 text-center p-4">
+                    <div class="cc-card-icon mb-3">
+                        <i class="bi bi-bag-x fs-1 text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold">Lost &amp; Found</h5>
+                    <p class="text-muted">
+                        Report lost items or browse found items on campus.
+                        Reconnect with your belongings quickly and easily.
+                    </p>
+                    <a href="{% url 'lostfound_create' %}" class="btn btn-outline-primary btn-sm mt-auto">
+                        Report Item
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 2: Campus HelpDesk -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card cc-card cc-feature-card h-100 text-center p-4">
+                    <div class="cc-card-icon mb-3">
+                        <i class="bi bi-headset fs-1 text-success"></i>
+                    </div>
+                    <h5 class="fw-bold">Campus HelpDesk</h5>
+                    <p class="text-muted">
+                        Raise maintenance requests, IT issues, or general
+                        campus complaints. Our team is here to help.
+                    </p>
+                    <a href="{% url 'ticket_create' %}" class="btn btn-outline-success btn-sm mt-auto">
+                        Submit Ticket
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 3: Track Progress -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card cc-card cc-feature-card h-100 text-center p-4">
+                    <div class="cc-card-icon mb-3">
+                        <i class="bi bi-bar-chart-steps fs-1 text-warning"></i>
+                    </div>
+                    <h5 class="fw-bold">Track Progress</h5>
+                    <p class="text-muted">
+                        Monitor the status of your submitted reports in
+                        real time. Stay informed every step of the way.
+                    </p>
+                    <a href="{% url 'profile' %}" class="btn btn-outline-warning btn-sm mt-auto">
+                        View Profile
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ===== STATISTICS SECTION ===== -->
+<section class="cc-stats py-5 py-lg-6">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-5 text-white">Portal at a Glance</h2>
+        <div class="row text-center g-4">
+
+            <div class="col-6 col-md-3">
+                <div class="cc-stat-card p-4">
+                    <div class="display-5 fw-bold text-warning">{{ total_reports }}</div>
+                    <p class="mb-0 text-light">Total Reports</p>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-3">
+                <div class="cc-stat-card p-4">
+                    <div class="display-5 fw-bold text-warning">{{ open_reports }}</div>
+                    <p class="mb-0 text-light">Open / In Progress</p>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-3">
+                <div class="cc-stat-card p-4">
+                    <div class="display-5 fw-bold text-warning">{{ resolved_reports }}</div>
+                    <p class="mb-0 text-light">Resolved / Closed</p>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-3">
+                <div class="cc-stat-card p-4">
+                    <div class="display-5 fw-bold text-warning">{{ lost_found_count }}</div>
+                    <p class="mb-0 text-light">Lost &amp; Found Items</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

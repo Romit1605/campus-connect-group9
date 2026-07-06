@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card cc-card shadow p-4">
+
+                <div class="mb-4">
+                    <h3 class="fw-bold">
+                        <i class="bi bi-pencil-square me-2 text-primary"></i>Edit Profile
+                    </h3>
+                    <p class="text-muted">Update your account and campus profile information.</p>
+                </div>
+
+                <!-- enctype="multipart/form-data" is required for profile image upload -->
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <!-- Section 1: Account Information (User model fields) -->
+                    <h6 class="fw-semibold text-muted text-uppercase small mb-3 border-bottom pb-2">
+                        Account Information
+                    </h6>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ user_form.first_name.id_for_label }}" class="form-label fw-semibold">First Name</label>
+                            {{ user_form.first_name }}
+                            {% if user_form.first_name.errors %}
+                            <div class="text-danger small mt-1">{{ user_form.first_name.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ user_form.last_name.id_for_label }}" class="form-label fw-semibold">Last Name</label>
+                            {{ user_form.last_name }}
+                            {% if user_form.last_name.errors %}
+                            <div class="text-danger small mt-1">{{ user_form.last_name.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ user_form.email.id_for_label }}" class="form-label fw-semibold">Email Address</label>
+                        {{ user_form.email }}
+                        {% if user_form.email.errors %}
+                        <div class="text-danger small mt-1">{{ user_form.email.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Section 2: Campus Profile (UserProfile model fields) -->
+                    <h6 class="fw-semibold text-muted text-uppercase small mb-3 border-bottom pb-2 mt-4">
+                        Campus Profile
+                    </h6>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ profile_form.student_id.id_for_label }}" class="form-label fw-semibold">Student ID</label>
+                            {{ profile_form.student_id }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ profile_form.phone.id_for_label }}" class="form-label fw-semibold">Phone Number</label>
+                            {{ profile_form.phone }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ profile_form.department.id_for_label }}" class="form-label fw-semibold">Department</label>
+                        {{ profile_form.department }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ profile_form.bio.id_for_label }}" class="form-label fw-semibold">Bio</label>
+                        {{ profile_form.bio }}
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="{{ profile_form.profile_image.id_for_label }}" class="form-label fw-semibold">Profile Image</label>
+                        <!-- Show current image thumbnail if one exists -->
+                        {% if user.profile.profile_image %}
+                        <div class="mb-2">
+                            <img src="{{ user.profile.profile_image.url }}"
+                                 alt="Current profile image"
+                                 class="rounded-circle"
+                                 style="width:60px; height:60px; object-fit:cover;">
+                            <span class="text-muted small ms-2">Current image</span>
+                        </div>
+                        {% endif %}
+                        {{ profile_form.profile_image }}
+                    </div>
+
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i>Save Changes
+                        </button>
+                        <a href="{% url 'profile' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle me-1"></i>Cancel
+                        </a>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
