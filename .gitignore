@@ -1,0 +1,29 @@
+# Virtual environment
+.venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Django SQLite database (do not commit)
+db.sqlite3
+
+# User-uploaded media files (do not commit)
+media/
+
+# Environment variables file
+.env
+
+# VS Code workspace settings
+.vscode/
+
+# JetBrains IDE files
+.idea/
+
+# macOS system files
+.DS_Store
+
+# Windows thumbnail cache
+Thumbs.db
