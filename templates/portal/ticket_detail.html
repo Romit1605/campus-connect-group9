@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <!-- ===== Ticket Card ===== -->
+            <div class="card cc-card shadow mb-4">
+
+                <!-- Header -->
+                <div class="card-header bg-primary text-white py-3 d-flex justify-content-between align-items-start">
+                    <div>
+                        <h4 class="mb-1 fw-bold">
+                            <i class="bi bi-ticket-detailed me-2"></i>{{ ticket.title }}
+                        </h4>
+                        <p class="mb-0 small opacity-75">
+                            Submitted by <strong>{{ ticket.user.get_full_name|default:ticket.user.username }}</strong>
+                            &middot; {{ ticket.created_at|date:"d M Y, H:i" }}
+                        </p>
+                    </div>
+                    {% if user == ticket.user %}
+                        <a href="{% url 'ticket_update' pk=ticket.pk %}" class="btn btn-sm btn-light ms-3">
+                            <i class="bi bi-pencil me-1"></i>Edit
+                        </a>
+                    {% endif %}
+                </div>
+
+                <div class="card-body p-4">
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- Badges row -->
+                    <div class="mb-4 d-flex flex-wrap gap-2">
+                        <!-- Status badge -->
+                        {% if ticket.status == "Open" %}
+                            <span class="badge bg-success fs-6"><i class="bi bi-circle me-1"></i>{{ ticket.status }}</span>
+                        {% elif ticket.status == "In Progress" %}
+                            <span class="badge bg-warning text-dark fs-6"><i class="bi bi-arrow-repeat me-1"></i>{{ ticket.status }}</span>
+                        {% elif ticket.status == "Resolved" %}
+                            <span class="badge bg-info text-dark fs-6"><i class="bi bi-check-circle me-1"></i>{{ ticket.status }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary fs-6"><i class="bi bi-lock me-1"></i>{{ ticket.status }}</span>
+                        {% endif %}
+
+                        <!-- Priority badge -->
+                        {% if ticket.priority == "High" %}
+                            <span class="badge bg-danger fs-6"><i class="bi bi-exclamation-triangle me-1"></i>{{ ticket.priority }} Priority</span>
+                        {% elif ticket.priority == "Medium" %}
+                            <span class="badge bg-warning text-dark fs-6"><i class="bi bi-dash-circle me-1"></i>{{ ticket.priority }} Priority</span>
+                        {% else %}
+                            <span class="badge bg-secondary fs-6"><i class="bi bi-arrow-down-circle me-1"></i>{{ ticket.priority }} Priority</span>
+                        {% endif %}
+
+                        <!-- Category badge -->
+                        {% if ticket.category %}
+                            <span class="badge bg-primary fs-6"><i class="bi bi-tag me-1"></i>{{ ticket.category.name }}</span>
+                        {% endif %}
+
+                        <!-- Visibility badge -->
+                        {% if ticket.is_public %}
+                            <span class="badge bg-light text-dark border fs-6"><i class="bi bi-eye me-1"></i>Public</span>
+                        {% else %}
+                            <span class="badge bg-light text-dark border fs-6"><i class="bi bi-eye-slash me-1"></i>Private</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Description -->
+                    <h6 class="fw-semibold text-muted mb-1"><i class="bi bi-chat-left-text me-1"></i>Description</h6>
+                    <p class="mb-4">{{ ticket.description }}</p>
+
+                    <!-- Location -->
+                    {% if ticket.location %}
+                        <h6 class="fw-semibold text-muted mb-1"><i class="bi bi-geo-alt me-1"></i>Location</h6>
+                        <p class="mb-4">{{ ticket.location }}</p>
+                    {% endif %}
+
+                    <!-- Attachment -->
+                    {% if ticket.attachment %}
+                        <h6 class="fw-semibold text-muted mb-1"><i class="bi bi-paperclip me-1"></i>Attachment</h6>
+                        <p class="mb-4">
+                            <a href="{{ ticket.attachment.url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                <i class="bi bi-download me-1"></i>Download Attachment
+                            </a>
+                        </p>
+                    {% endif %}
+
+                    <!-- Last updated -->
+                    <p class="text-muted small mb-0">
+                        <i class="bi bi-clock-history me-1"></i>Last updated: {{ ticket.updated_at|date:"d M Y, H:i" }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- ===== Status History ===== -->
+            {% if status_updates %}
+            <div class="card cc-card shadow mb-4">
+                <div class="card-header bg-light py-2">
+                    <h6 class="mb-0 fw-semibold">
+                        <i class="bi bi-clock-history me-2 text-secondary"></i>Status History
+                    </h6>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for update in status_updates %}
+                    <li class="list-group-item py-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-secondary me-1">{{ update.old_status }}</span>
+                                <i class="bi bi-arrow-right text-muted"></i>
+                                <span class="badge bg-primary ms-1">{{ update.new_status }}</span>
+                                {% if update.note %}
+                                    <p class="text-muted small mb-0 mt-1">{{ update.note }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="text-end text-muted small">
+                                <div>{{ update.updated_by.get_full_name|default:update.updated_by.username }}</div>
+                                <div>{{ update.updated_at|date:"d M Y, H:i" }}</div>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <!-- ===== Comments ===== -->
+            <div class="card cc-card shadow mb-4">
+                <div class="card-header bg-light py-2">
+                    <h6 class="mb-0 fw-semibold">
+                        <i class="bi bi-chat-dots me-2 text-secondary"></i>Comments
+                        <span class="badge bg-secondary ms-1">{{ comments|length }}</span>
+                    </h6>
+                </div>
+
+                {% if comments %}
+                    <ul class="list-group list-group-flush">
+                        {% for comment in comments %}
+                        <li class="list-group-item py-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="fw-semibold">
+                                    <i class="bi bi-person-circle me-1 text-primary"></i>
+                                    {{ comment.user.get_full_name|default:comment.user.username }}
+                                </span>
+                                <span class="text-muted small">{{ comment.created_at|date:"d M Y, H:i" }}</span>
+                            </div>
+                            <p class="mb-0">{{ comment.message }}</p>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="card-body text-center text-muted py-4">
+                        <i class="bi bi-chat-square-dots fs-3 mb-2 d-block"></i>
+                        No comments yet. Be the first to comment.
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- ===== Add Comment ===== -->
+            {% if user.is_authenticated %}
+            <div class="card cc-card shadow">
+                <div class="card-header bg-light py-2">
+                    <h6 class="mb-0 fw-semibold">
+                        <i class="bi bi-plus-circle me-2 text-secondary"></i>Add a Comment
+                    </h6>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            {{ comment_form.message }}
+                            {% if comment_form.message.errors %}
+                                <div class="invalid-feedback d-block">{{ comment_form.message.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-send me-1"></i>Post Comment
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                <a href="{% url 'login' %}">Log in</a> to leave a comment.
+            </div>
+            {% endif %}
+
+            <!-- Back link -->
+            <div class="mt-4">
+                <a href="{% url 'report_list' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i>Back to Reports
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
