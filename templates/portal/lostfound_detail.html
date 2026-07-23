@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="cc-form-section py-5 py-lg-6">
+<div class="container">
+<div class="row justify-content-center">
+<div class="col-12 col-xl-9">
+
+    <!-- Back link -->
+    <a href="{% url 'report_list' %}" class="btn btn-link text-decoration-none text-muted ps-0 mb-3">
+        <i class="bi bi-arrow-left me-1"></i>Back to Reports
+    </a>
+
+    <!-- Main detail card -->
+    <div class="card cc-card shadow-lg border-0">
+        <div class="card-body p-4 p-md-5">
+
+            <!-- Header: type + status badges -->
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                {% if item.item_type == 'Lost Item' %}
+                <span class="badge bg-warning text-dark fs-6">
+                    <i class="bi bi-search me-1"></i>Lost Item
+                </span>
+                {% else %}
+                <span class="badge bg-success fs-6">
+                    <i class="bi bi-check-circle me-1"></i>Found Item
+                </span>
+                {% endif %}
+
+                {% if item.status == 'Open' %}
+                <span class="badge bg-info text-dark">Open</span>
+                {% elif item.status == 'In Progress' %}
+                <span class="badge bg-primary">In Progress</span>
+                {% elif item.status == 'Resolved' %}
+                <span class="badge bg-success">Resolved</span>
+                {% elif item.status == 'Claimed' %}
+                <span class="badge bg-success">Claimed</span>
+                {% else %}
+                <span class="badge bg-secondary">{{ item.status }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Title -->
+            <h2 class="fw-bold mb-4">{{ item.title }}</h2>
+
+            <!-- Info grid -->
+            <div class="row g-3 mb-4">
+
+                {% if item.location %}
+                <div class="col-sm-6">
+                    <div class="d-flex align-items-start gap-2">
+                        <i class="bi bi-geo-alt text-danger mt-1"></i>
+                        <div>
+                            <div class="text-muted small">Location</div>
+                            <div class="fw-semibold">{{ item.location }}</div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="col-sm-6">
+                    <div class="d-flex align-items-start gap-2">
+                        <i class="bi bi-calendar-event text-primary mt-1"></i>
+                        <div>
+                            <div class="text-muted small">Date Reported</div>
+                            <div class="fw-semibold">{{ item.date_reported|date:"d F Y" }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="d-flex align-items-start gap-2">
+                        <i class="bi bi-person text-secondary mt-1"></i>
+                        <div>
+                            <div class="text-muted small">Reported By</div>
+                            <div class="fw-semibold">{{ item.user.get_full_name|default:item.user.username }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if item.contact_email %}
+                <div class="col-sm-6">
+                    <div class="d-flex align-items-start gap-2">
+                        <i class="bi bi-envelope text-primary mt-1"></i>
+                        <div>
+                            <div class="text-muted small">Contact Email</div>
+                            <div class="fw-semibold">
+                                <a href="mailto:{{ item.contact_email }}" class="text-decoration-none">
+                                    {{ item.contact_email }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+
+            <!-- Description -->
+            <div class="mb-4">
+                <h5 class="fw-semibold mb-2">
+                    <i class="bi bi-card-text me-2 text-primary"></i>Description
+                </h5>
+                <div class="bg-light rounded-3 p-3 border">
+                    <p class="mb-0" style="white-space: pre-line;">{{ item.description }}</p>
+                </div>
+            </div>
+
+            <!-- Photo -->
+            {% if item.photo %}
+            <div class="mb-4">
+                <h5 class="fw-semibold mb-2">
+                    <i class="bi bi-image me-2 text-secondary"></i>Photo
+                </h5>
+                <img src="{{ item.photo.url }}"
+                     alt="Photo of {{ item.title }}"
+                     class="img-fluid rounded-3 shadow-sm"
+                     style="max-height: 400px; object-fit: contain;">
+            </div>
+            {% endif %}
+
+            <!-- Document -->
+            {% if item.document %}
+            <div class="mb-4">
+                <h5 class="fw-semibold mb-2">
+                    <i class="bi bi-paperclip me-2 text-secondary"></i>Supporting Document
+                </h5>
+                <a href="{{ item.document.url }}" class="btn btn-outline-secondary btn-sm" target="_blank">
+                    <i class="bi bi-download me-1"></i>Download Document
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Comments -->
+            <hr class="my-4">
+            <div class="mb-4">
+                <h5 class="fw-semibold mb-3">
+                    <i class="bi bi-chat-dots me-2 text-primary"></i>Comments
+                </h5>
+
+                {% if comments %}
+                    <div class="d-flex flex-column gap-3">
+                        {% for comment in comments %}
+                        <div class="border rounded-3 p-3 bg-light">
+                            <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
+                                <strong>{{ comment.user.get_full_name|default:comment.user.username }}</strong>
+                                <small class="text-muted">{{ comment.created_at|date:"d M Y, H:i" }}</small>
+                            </div>
+                            <p class="mb-0">{{ comment.message }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="border rounded-3 p-3 bg-light text-muted">No comments yet. Be the first to share an update.</div>
+                {% endif %}
+            </div>
+
+            <div class="mt-4">
+                {% if user.is_authenticated %}
+                <form method="post" class="border rounded-3 p-3 bg-light">
+                    {% csrf_token %}
+                    <label for="id_message" class="form-label fw-semibold">Add a comment</label>
+                    {{ comment_form.message }}
+                    <button type="submit" class="btn btn-primary mt-3">Post Comment</button>
+                </form>
+                {% else %}
+                <div class="alert alert-light border text-muted mb-0">Please log in to add a comment.</div>
+                {% endif %}
+            </div>
+
+            <div class="mt-4">
+                <h5 class="fw-semibold mb-3">
+                    <i class="bi bi-clock-history me-2 text-primary"></i>Status History
+                </h5>
+
+                {% if status_updates %}
+                    <div class="d-flex flex-column gap-3">
+                        {% for update in status_updates %}
+                        <div class="border rounded-3 p-3 bg-light">
+                            <div class="d-flex flex-wrap justify-content-between gap-2 mb-2">
+                                <span class="fw-semibold">{{ update.old_status }} → {{ update.new_status }}</span>
+                                <small class="text-muted">{{ update.updated_at|date:"d M Y, H:i" }}</small>
+                            </div>
+                            <div class="small text-muted mb-1">
+                                Updated by: {{ update.updated_by.get_full_name|default:update.updated_by.username }}
+                            </div>
+                            <div class="small text-muted">{{ update.note }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="border rounded-3 p-3 bg-light text-muted">No status updates yet.</div>
+                {% endif %}
+            </div>
+
+            <!-- Footer actions -->
+            <hr class="my-4">
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{% url 'report_list' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i>Back to Reports
+                </a>
+                {% if user == item.user %}
+                <a href="{% url 'lostfound_update' item.pk %}" class="btn btn-warning fw-semibold">
+                    <i class="bi bi-pencil-square me-1"></i>Edit Report
+                </a>
+                {% endif %}
+                {% if user.is_authenticated %}
+                <a href="{% url 'lostfound_create' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-lg me-1"></i>Submit Another Report
+                </a>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+
+</div>
+</div>
+</div>
+</div>
+{% endblock content %}
